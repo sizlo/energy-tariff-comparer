@@ -1,0 +1,7 @@
+{
+  "name": "OVO Extended Fixed 15M + Heat Pump Plus",
+  "type": "FLAT_HEAT_PUMP_RATE",
+  "daily_standing_charge_pence": 49.17,
+  "heat_pump_unit_rate_pence_per_kwh": 15.0,
+  "non_heat_pump_unit_rate_pence_per_kwh": 24.36
+}
