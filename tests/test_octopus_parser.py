@@ -16,6 +16,10 @@ class OctopusParserTests(unittest.TestCase):
         consumption = self.parser.parse(os.path.join(TEST_DATA, "valid.csv"))
         self.assertEqual("octopus", consumption.source)
 
+    def test_gets_correct_count_of_buckets(self) -> None:
+        consumption = self.parser.parse(os.path.join(TEST_DATA, "valid.csv"))
+        self.assertEqual(48, len(consumption.buckets))
+
     def test_bucket_values_are_sum_of_each_half_hour_within_hour(self) -> None:
         consumption = self.parser.parse(os.path.join(TEST_DATA, "valid.csv"))
         self.assertAlmostEqual(0.691, consumption.buckets[datetime(2025, 2, 11, 0)])
@@ -40,3 +44,7 @@ class OctopusParserTests(unittest.TestCase):
     def test_errors_if_end_is_not_exactly_half_an_hour_after_start(self) -> None:
         with self.assertRaises(Exception):
             self.parser.parse(os.path.join(TEST_DATA, "end_is_not_exactly_half_an_hour_after_start.csv"))
+
+    def test_errors_if_half_hourly_bucket_is_missing(self) -> None:
+        with self.assertRaises(Exception):
+            self.parser.parse(os.path.join(TEST_DATA, "missing_half_hourly_bucket.csv"))

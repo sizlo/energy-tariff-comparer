@@ -16,6 +16,10 @@ class VaillantParserTests(unittest.TestCase):
         consumption = self.parser.parse(os.path.join(TEST_DATA, "valid.csv"))
         self.assertEqual("vaillant", consumption.source)
 
+    def test_gets_correct_count_of_buckets(self) -> None:
+        consumption = self.parser.parse(os.path.join(TEST_DATA, "valid.csv"))
+        self.assertEqual(48, len(consumption.buckets))
+
     def test_bucket_values_are_sum_of_dhw_and_heating_usage_converted_to_kwh(self) -> None:
         consumption = self.parser.parse(os.path.join(TEST_DATA, "valid.csv"))
         self.assertAlmostEqual(0.5234340052816901, consumption.buckets[datetime(2025, 2, 11, 0)])
@@ -43,3 +47,7 @@ class VaillantParserTests(unittest.TestCase):
     def test_errors_if_end_is_not_exactly_one_hour_after_start(self) -> None:
         with self.assertRaises(Exception):
             self.parser.parse(os.path.join(TEST_DATA, "end_is_not_exactly_one_hour_after_start.csv"))
+
+    def test_errors_if_hourly_bucket_is_missing(self) -> None:
+        with self.assertRaises(Exception):
+            self.parser.parse(os.path.join(TEST_DATA, "missing_hourly_bucket.csv"))

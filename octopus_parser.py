@@ -8,6 +8,7 @@ from Consumption import Consumption
 class OctopusParser:
     def __init__(self) -> None:
         self.buckets = {}
+        self.half_hour_buckets_seen = []
         self.source = "octopus"
 
     def parse(self, file_path: str) -> Consumption:
@@ -17,6 +18,8 @@ class OctopusParser:
             reader = csv.DictReader(file, skipinitialspace=True)
             for row in reader:
                 self.process_row(row)
+
+        self.validate_no_missing_buckets()
 
         return Consumption(self.source, self.buckets)
 
@@ -31,6 +34,7 @@ class OctopusParser:
             self.buckets[bucket_start] = 0
 
         self.buckets[bucket_start] += float(row["Consumption (kwh)"])
+        self.half_hour_buckets_seen.append(start)
 
     def validate_times(self, start: datetime.datetime, end: datetime.datetime) -> None:
         pass
@@ -48,3 +52,13 @@ class OctopusParser:
         is_exact_hour = the_datetime.time() == datetime.time(hour=the_datetime.hour, minute=0)
         is_exact_half_hour = the_datetime.time() == datetime.time(hour=the_datetime.hour, minute=30)
         return is_exact_hour or is_exact_half_hour
+
+    def validate_no_missing_buckets(self) -> None:
+        first_bucket = min(self.half_hour_buckets_seen)
+        last_bucket = max(self.half_hour_buckets_seen)
+
+        checking_bucket = first_bucket
+        while checking_bucket <= last_bucket:
+            if checking_bucket not in self.half_hour_buckets_seen:
+                raise Exception(f"missing a half hourly bucket from the octopus csv, missing start={checking_bucket}")
+            checking_bucket += datetime.timedelta(minutes=30)

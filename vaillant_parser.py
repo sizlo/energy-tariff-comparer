@@ -18,6 +18,8 @@ class VaillantParser:
             for row in reader:
                 self.process_row(row)
 
+        self.validate_no_missing_buckets()
+
         return Consumption(self.source, self.buckets)
 
     def process_row(self, row: Dict[str, str]) -> None:
@@ -43,3 +45,13 @@ class VaillantParser:
     @staticmethod
     def is_exact_hour(the_datetime: datetime.datetime) -> bool:
         return the_datetime.time() == datetime.time(hour=the_datetime.hour, minute=0)
+
+    def validate_no_missing_buckets(self) -> None:
+        first_bucket = min(self.buckets.keys())
+        last_bucket = max(self.buckets.keys())
+
+        checking_bucket = first_bucket
+        while checking_bucket <= last_bucket:
+            if checking_bucket not in self.buckets.keys():
+                raise Exception(f"missing an hourly bucket from the vaillant csv, missing start={checking_bucket}")
+            checking_bucket += datetime.timedelta(hours=1)
