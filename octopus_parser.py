@@ -3,6 +3,7 @@ import datetime
 from typing import Dict
 
 from Consumption import Consumption
+from exception import ParserException
 
 
 class OctopusParser:
@@ -39,13 +40,13 @@ class OctopusParser:
     def validate_times(self, start: datetime.datetime, end: datetime.datetime) -> None:
         pass
         if not self.is_exact_hour_or_half_hour(start):
-            raise Exception(f"start column of octopus csv is not an exact hour or half hour time, start={start}")
+            raise ParserException(f"start column of octopus csv is not an exact hour or half hour time, start={start}")
 
         if not self.is_exact_hour_or_half_hour(end):
-            raise Exception(f"end column of octopus csv is not an exact hour or half hour time, end={end}")
+            raise ParserException(f"end column of octopus csv is not an exact hour or half hour time, end={end}")
 
         if (end - start) != datetime.timedelta(minutes=30):
-            raise Exception(f"timespan of row from octopus csv is not exactly half an hour, start={start}, end={end}")
+            raise ParserException(f"timespan of row from octopus csv is not exactly half an hour, start={start}, end={end}")
 
     @staticmethod
     def is_exact_hour_or_half_hour(the_datetime: datetime.datetime) -> bool:
@@ -60,5 +61,5 @@ class OctopusParser:
         checking_bucket = first_bucket
         while checking_bucket <= last_bucket:
             if checking_bucket not in self.half_hour_buckets_seen:
-                raise Exception(f"missing a half hourly bucket from the octopus csv, missing start={checking_bucket}")
+                raise ParserException(f"missing a half hourly bucket from the octopus csv, missing start={checking_bucket}")
             checking_bucket += datetime.timedelta(minutes=30)

@@ -3,6 +3,7 @@ import datetime
 from typing import Dict
 
 from Consumption import Consumption
+from exception import ParserException
 
 
 class VaillantParser:
@@ -34,13 +35,13 @@ class VaillantParser:
 
     def validate_times(self, start: datetime.datetime, end: datetime.datetime) -> None:
         if not self.is_exact_hour(start):
-            raise Exception(f"start column of vaillant csv is not an exact hour time, start={start}")
+            raise ParserException(f"start column of vaillant csv is not an exact hour time, start={start}")
 
         if not self.is_exact_hour(end):
-            raise Exception(f"end column of vaillant csv is not an exact hour time, end={end}")
+            raise ParserException(f"end column of vaillant csv is not an exact hour time, end={end}")
 
         if (end - start) != datetime.timedelta(hours=1):
-            raise Exception(f"timespan of row from vaillant csv is not exactly one hour, start={start}, end={end}")
+            raise ParserException(f"timespan of row from vaillant csv is not exactly one hour, start={start}, end={end}")
 
     @staticmethod
     def is_exact_hour(the_datetime: datetime.datetime) -> bool:
@@ -53,5 +54,5 @@ class VaillantParser:
         checking_bucket = first_bucket
         while checking_bucket <= last_bucket:
             if checking_bucket not in self.buckets.keys():
-                raise Exception(f"missing an hourly bucket from the vaillant csv, missing start={checking_bucket}")
+                raise ParserException(f"missing an hourly bucket from the vaillant csv, missing start={checking_bucket}")
             checking_bucket += datetime.timedelta(hours=1)

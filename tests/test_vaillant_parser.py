@@ -2,6 +2,7 @@ import unittest
 import os
 from datetime import datetime
 
+from exception import ParserException
 from vaillant_parser import VaillantParser
 
 TEST_DATA = os.path.join(os.path.dirname(os.path.realpath(__file__)), "data", "vaillant")
@@ -37,17 +38,17 @@ class VaillantParserTests(unittest.TestCase):
         self.assertAlmostEqual(0.32021549619682673, consumption.buckets[datetime(2025, 2, 12, 23)])
 
     def test_errors_if_start_is_not_exact_hour_time(self) -> None:
-        with self.assertRaises(Exception):
+        with self.assertRaises(ParserException):
             self.parser.parse(os.path.join(TEST_DATA, "start_is_not_exact_hour_time.csv"))
 
     def test_errors_if_end_is_not_exact_hour_time(self) -> None:
-        with self.assertRaises(Exception):
+        with self.assertRaises(ParserException):
             self.parser.parse(os.path.join(TEST_DATA, "end_is_not_exact_hour_time.csv"))
 
     def test_errors_if_end_is_not_exactly_one_hour_after_start(self) -> None:
-        with self.assertRaises(Exception):
+        with self.assertRaises(ParserException):
             self.parser.parse(os.path.join(TEST_DATA, "end_is_not_exactly_one_hour_after_start.csv"))
 
     def test_errors_if_hourly_bucket_is_missing(self) -> None:
-        with self.assertRaises(Exception):
+        with self.assertRaises(ParserException):
             self.parser.parse(os.path.join(TEST_DATA, "missing_hourly_bucket.csv"))
