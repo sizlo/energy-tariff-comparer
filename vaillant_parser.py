@@ -2,7 +2,7 @@ import csv
 import datetime
 from typing import Dict
 
-from Consumption import Consumption
+from consumption import Consumption
 from exception import ParserException
 
 
