@@ -1,0 +1,5 @@
+{
+  "name": "Hourly Variable Missing Hourly Rates Test Tariff",
+  "type": "HOURLY_VARIABLE",
+  "daily_standing_charge_pence": 49.98
+}

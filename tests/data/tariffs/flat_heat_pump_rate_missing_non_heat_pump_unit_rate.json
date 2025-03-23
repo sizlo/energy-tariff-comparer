@@ -1,0 +1,6 @@
+{
+  "name": "Flat Heat Pump Rate Missing Non Heat Pump Unit Rate Test Tariff",
+  "type": "FLAT_HEAT_PUMP_RATE",
+  "daily_standing_charge_pence": 49.17,
+  "heat_pump_unit_rate_pence_per_kwh": 24.36
+}
