@@ -20,6 +20,11 @@ class BucketRollUpper:
             day_bucket = self.data.daily.at_start(day_start)
             self.add_consumption_and_prices_to_bucket(hour_bucket, day_bucket)
 
+        for day_bucket in self.data.daily.buckets.values():
+            for tariff_prices in day_bucket.tariff_prices_pence.values():
+                tariff_prices.standing_charge = tariff_prices.tariff.daily_standing_charge_pence
+                tariff_prices.total += tariff_prices.standing_charge
+
     def roll_up_months(self):
         for day_bucket in self.data.daily.buckets.values():
             month_start = day_bucket.start.replace(day=1)
@@ -57,8 +62,6 @@ class BucketRollUpper:
             if name not in to_bucket.tariff_prices_pence.keys():
                 new_tariff_prices = TariffPrices(from_tariff_prices.tariff)
                 new_tariff_prices.set_to_zero()
-                if (to_bucket.end - to_bucket.start) == timedelta(days=1):
-                    new_tariff_prices.standing_charge = from_tariff_prices.tariff.daily_standing_charge_pence
                 to_bucket.tariff_prices_pence[name] = new_tariff_prices
 
             to_tariff_prices = to_bucket.tariff_prices_pence[name]
