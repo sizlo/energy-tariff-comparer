@@ -13,6 +13,6 @@ class HourlyPriceCalculator:
             tariff_prices.dhw = self.tariff.get_price_in_pence_for_hourly_heat_pump_use(bucket_data.start, bucket_data.consumption_kwh.dhw)
             tariff_prices.heating = self.tariff.get_price_in_pence_for_hourly_heat_pump_use(bucket_data.start, bucket_data.consumption_kwh.heating)
             tariff_prices.heat_pump = self.tariff.get_price_in_pence_for_hourly_heat_pump_use(bucket_data.start, bucket_data.consumption_kwh.heat_pump)
-            tariff_prices.non_heat_pump = self.tariff.get_price_in_pence_for_hourly_heat_pump_use(bucket_data.start, bucket_data.consumption_kwh.non_heat_pump)
-            tariff_prices.total = self.tariff.get_price_in_pence_for_hourly_heat_pump_use(bucket_data.start, bucket_data.consumption_kwh.total)
+            tariff_prices.non_heat_pump = self.tariff.get_price_in_pence_for_hourly_non_heat_pump_use(bucket_data.start, bucket_data.consumption_kwh.non_heat_pump)
+            tariff_prices.total = tariff_prices.non_heat_pump + tariff_prices.heat_pump
             bucket_data.tariff_prices_pence[self.tariff.name] = tariff_prices
