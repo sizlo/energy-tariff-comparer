@@ -3,6 +3,7 @@ import sys
 import glob
 
 from comparer import Comparer
+from config_parser import ConfigParser
 from data import Data
 from octopus_parser import OctopusParser
 from tarrif_parser import TariffParser
@@ -10,18 +11,23 @@ from vaillant_parser import VaillantParser
 
 
 def main():
-    data_path = sys.argv[1]
+    if len(sys.argv) < 2:
+        print("Usage: python main.py <config_file_path>")
+        sys.exit(1)
+
+    config = ConfigParser(sys.argv[1]).parse()
 
     data = Data()
 
-    VaillantParser(os.path.join(data_path, "usage", "vaillant.csv"), data).parse()
-    OctopusParser(os.path.join(data_path, "usage", "octopus.csv"), data).parse()
+    VaillantParser(config.vaillant_file_path, data).parse()
+    OctopusParser(config.octopus_file_path, data).parse()
 
-    tariffs = [TariffParser().parse(file) for file in glob.glob(f"{data_path}/tariffs/*.json")]
+    tariffs = [TariffParser().parse(file) for file in config.tariff_file_paths]
 
     Comparer(data, tariffs).compare()
 
-    # TODO - write data to csvs, controllable by CLI
+    if config.csv_output_file_path is not None:
+        print("TODO: write csvs")
 
 
 if __name__ == "__main__":

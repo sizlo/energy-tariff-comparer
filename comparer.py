@@ -26,6 +26,7 @@ class Comparer:
         print("**** Total price for entire period of input data for each tariff ****")
         for total_prices in sorted_total_prices:
             print(f"{total_prices.tariff.name}: {render_price(total_prices.total)}")
+        print()
 
     def validate_both_consumptions_have_same_buckets(self) -> None:
         for bucket in self.data.hourly.buckets.values():

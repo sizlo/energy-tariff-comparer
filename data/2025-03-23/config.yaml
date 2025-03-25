@@ -1,0 +1,15 @@
+# All paths are relative to the directory this config file is in
+
+vaillantData: "usage/vaillant.csv"
+
+octopusData: "usage/octopus.csv"
+
+tariffData:
+  - "tariffs/octopus_12m_fixed_august_2024_v1.json"
+  - "tariffs/octopus_cosy.json"
+  - "tariffs/ovo_1y_fixed_greener_electricity_heat_pump_plus.json"
+  - "tariffs/ovo_1y_fixed_heat_pump_plus.json"
+  - "tariffs/ovo_extended_fixed_15m_heat_pump_plus.json"
+
+# Uncomment this to output csvs of all consumptions and prices
+csvOutputDir: "output/"
