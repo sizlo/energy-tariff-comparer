@@ -1,59 +1,50 @@
-from tariff_price_writer import TariffPriceWriter
-from consumption import Consumption
-from consumption_price import ConsumptionPrice
-from consumption_price_calculator import ConsumptionPriceCalculator
+from typing import List
+
+from bucket_roll_upper import BucketRollUpper
+from data import Data
+from hourly_price_calculator import HourlyPriceCalculator
 from exception import MismatchedBucketsException
 from tariff import Tariff
-from tarrif_price import TariffPrice
 from util import render_price
 
 
 class Comparer:
-    def __init__(self, heat_pump_consumption: Consumption, total_consumption: Consumption, tariffs: [Tariff]):
-        self.heat_pump_consumption = heat_pump_consumption
-        self.total_consumption = total_consumption
+    def __init__(self, data: Data, tariffs: List[Tariff]):
+        self.data = data
         self.tariffs = tariffs
 
         self.validate_both_consumptions_have_same_buckets()
         self.increase_total_consumption_when_heat_pump_consumption_is_greater_than_total_consumption()
 
-    def compare(self, output_csvs: bool = False) -> None:
-        tariff_prices = [TariffPrice(tariff, self.get_price(tariff)) for tariff in self.tariffs]
-        tariff_prices.sort(key=lambda tp: tp.consumption_price.total_price_pence)
+    def compare(self, output_csvs: bool = False):
+        for tariff in self.tariffs:
+            HourlyPriceCalculator(self.data, tariff).calculate()
+        BucketRollUpper(self.data).roll_up()
 
-        # TODO - control writing csvs from cli options
-        if output_csvs:
-            TariffPriceWriter(tariff_prices, "TODO").write()
+        sorted_total_prices = sorted(self.data.total.tariff_prices_pence.values(), key=lambda prices: prices.total)
 
         print("**** Total price for entire period of input data for each tariff ****")
-        for tariff_price in tariff_prices:
-            print(f"{tariff_price.tariff.name}: {render_price(tariff_price.consumption_price.total_price_pence)}")
+        for total_prices in sorted_total_prices:
+            print(f"{total_prices.tariff.name}: {render_price(total_prices.total)}")
 
     def validate_both_consumptions_have_same_buckets(self) -> None:
-        for total_key in self.total_consumption.buckets.keys():
-            if total_key not in self.heat_pump_consumption.buckets.keys():
-                raise MismatchedBucketsException(f"Bucket is present in total_consumption, but not in heat_pump_consumption, bucket={total_key}")
-
-        for heat_pump_key in self.heat_pump_consumption.buckets.keys():
-            if heat_pump_key not in self.total_consumption.buckets.keys():
-                raise MismatchedBucketsException(f"Bucket is present in heat_pump_consumption, but not in total_consumption, bucket={heat_pump_key}")
+        for bucket in self.data.hourly.buckets.values():
+            if bucket.consumption_kwh.total is None:
+                raise MismatchedBucketsException(f"Hourly bucket missing value for total consumption, hour={bucket.start}")
+            if bucket.consumption_kwh.heat_pump is None:
+                raise MismatchedBucketsException(f"Hourly bucket missing value for heat pump consumption, hour={bucket.start}")
 
     def increase_total_consumption_when_heat_pump_consumption_is_greater_than_total_consumption(self):
         fixed_hours = []
-        for hour in self.total_consumption.buckets.keys():
-            hourly_heat_pump_consumption = self.heat_pump_consumption.buckets[hour]
-            hourly_total_consumption = self.total_consumption.buckets[hour]
-            if hourly_heat_pump_consumption > hourly_total_consumption:
-                self.total_consumption.buckets[hour] = hourly_heat_pump_consumption
-                fixed_hours.append(hour)
+        for bucket in self.data.hourly.buckets.values():
+            if bucket.consumption_kwh.heat_pump > bucket.consumption_kwh.total:
+                self.data.hourly.set_total_consumption(bucket.start, bucket.consumption_kwh.heat_pump)
+                fixed_hours.append(bucket.start)
+
         if len(fixed_hours) > 0:
             print("**** Warning ****")
-            print(f"The following {len(fixed_hours)} buckets had greater heat pump consumption than total consumption.")
-            print("This has been fixed by copying the heat pump consumption value into the total consumption bucket.")
+            print(f"The following {len(fixed_hours)} hourly buckets had greater heat pump consumption than total consumption.")
+            print("This has been fixed by copying the heat pump consumption value into the total consumption value.")
             for fixed_hour in fixed_hours:
                 print(f"- {fixed_hour}")
             print()
-
-    def get_price(self, tariff: Tariff) -> ConsumptionPrice:
-        calculator = ConsumptionPriceCalculator(self.heat_pump_consumption, self.total_consumption, tariff)
-        return calculator.calculate_consumption_price()

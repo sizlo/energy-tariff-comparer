@@ -16,7 +16,11 @@ class Tariff(ABC):
         self.daily_standing_charge_pence = daily_standing_charge_pence
 
     @abstractmethod
-    def get_price_in_pence_for_hourly_use(self, hour_start: datetime, heat_pump_usage_kwh: float, non_heat_pump_usage_kwh: float) -> float:
+    def get_price_in_pence_for_hourly_heat_pump_use(self, hour_start: datetime, usage_kwh: float) -> float:
+        pass
+
+    @abstractmethod
+    def get_price_in_pence_for_hourly_non_heat_pump_use(self, hour_start: datetime, usage_kwh: float) -> float:
         pass
 
 
@@ -25,9 +29,11 @@ class StandardTariff(Tariff):
         super().__init__(name, daily_standing_charge_pence)
         self.unit_price_pence_per_kwh = unit_price_pence_per_kwh
 
-    def get_price_in_pence_for_hourly_use(self, hour_start: datetime, heat_pump_usage_kwh: float, non_heat_pump_usage_kwh: float) -> float:
-        combined_usage = heat_pump_usage_kwh + non_heat_pump_usage_kwh
-        return combined_usage * self.unit_price_pence_per_kwh
+    def get_price_in_pence_for_hourly_heat_pump_use(self, hour_start: datetime, usage_kwh: float) -> float:
+        return usage_kwh * self.unit_price_pence_per_kwh
+
+    def get_price_in_pence_for_hourly_non_heat_pump_use(self, hour_start: datetime, usage_kwh: float) -> float:
+        return usage_kwh * self.unit_price_pence_per_kwh
 
 
 class HourlyVariableTariff(Tariff):
@@ -35,9 +41,11 @@ class HourlyVariableTariff(Tariff):
         super().__init__(name, daily_standing_charge_pence)
         self.hourly_unit_rates_pence_per_kwh = hourly_unit_rates_pence_per_kwh
 
-    def get_price_in_pence_for_hourly_use(self, hour_start: datetime, heat_pump_usage_kwh: float, non_heat_pump_usage_kwh: float) -> float:
-        combined_usage = heat_pump_usage_kwh + non_heat_pump_usage_kwh
-        return combined_usage * self.hourly_unit_rates_pence_per_kwh[hour_start.hour]
+    def get_price_in_pence_for_hourly_heat_pump_use(self, hour_start: datetime, usage_kwh: float) -> float:
+        return usage_kwh * self.hourly_unit_rates_pence_per_kwh[hour_start.hour]
+
+    def get_price_in_pence_for_hourly_non_heat_pump_use(self, hour_start: datetime, usage_kwh: float) -> float:
+        return usage_kwh * self.hourly_unit_rates_pence_per_kwh[hour_start.hour]
 
 
 class FlatHeatPumpRateTariff(Tariff):
@@ -46,7 +54,8 @@ class FlatHeatPumpRateTariff(Tariff):
         self.heat_pump_unit_rate_pence_per_kwh = heat_pump_unit_rate_pence_per_kwh
         self.non_heat_pump_unit_rate_pence_per_kwh = non_heat_pump_unit_rate_pence_per_kwh
 
-    def get_price_in_pence_for_hourly_use(self, hour_start: datetime, heat_pump_usage_kwh: float, non_heat_pump_usage_kwh: float) -> float:
-        heat_pump_price = self.heat_pump_unit_rate_pence_per_kwh * heat_pump_usage_kwh
-        non_heat_pump_price = self.non_heat_pump_unit_rate_pence_per_kwh * non_heat_pump_usage_kwh
-        return heat_pump_price + non_heat_pump_price
+    def get_price_in_pence_for_hourly_heat_pump_use(self, hour_start: datetime, usage_kwh: float) -> float:
+        return usage_kwh * self.heat_pump_unit_rate_pence_per_kwh
+
+    def get_price_in_pence_for_hourly_non_heat_pump_use(self, hour_start: datetime, usage_kwh: float) -> float:
+        return usage_kwh * self.non_heat_pump_unit_rate_pence_per_kwh
