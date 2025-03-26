@@ -5,7 +5,7 @@ from config_parser import ConfigParser
 from csv_writer import CsvWriter
 from data import Data
 from octopus_parser import OctopusParser
-from tarrif_parser import TariffParser
+from tariff_parser import TariffParser
 from vaillant_parser import VaillantParser
 
 

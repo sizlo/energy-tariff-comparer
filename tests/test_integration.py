@@ -5,7 +5,7 @@ from datetime import datetime
 from comparer import Comparer
 from data import Data
 from octopus_parser import OctopusParser
-from tarrif_parser import TariffParser
+from tariff_parser import TariffParser
 from vaillant_parser import VaillantParser
 
 TEST_DATA = os.path.join(os.path.dirname(os.path.realpath(__file__)), "data")

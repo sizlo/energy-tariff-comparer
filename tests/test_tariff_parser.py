@@ -3,7 +3,7 @@ import os
 
 from exception import ParserException
 from tariff import StandardTariff, HourlyVariableTariff, FlatHeatPumpRateTariff
-from tarrif_parser import TariffParser
+from tariff_parser import TariffParser
 
 TEST_DATA = os.path.join(os.path.dirname(os.path.realpath(__file__)), "data", "tariffs")
 
