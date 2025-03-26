@@ -52,7 +52,7 @@ class BucketData:
 class TimeBucketedData:
     def __init__(self, timespan: relativedelta):
         self.buckets: Dict[datetime, BucketData] = {}
-        self.timespan = timespan
+        self.timespan: relativedelta = timespan
 
     def at_start(self, start: datetime) -> BucketData:
         return self.buckets[start]

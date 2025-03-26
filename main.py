@@ -1,9 +1,8 @@
-import os.path
 import sys
-import glob
 
 from comparer import Comparer
 from config_parser import ConfigParser
+from csv_writer import CsvWriter
 from data import Data
 from octopus_parser import OctopusParser
 from tarrif_parser import TariffParser
@@ -27,7 +26,7 @@ def main():
     Comparer(data, tariffs).compare()
 
     if config.csv_output_file_path is not None:
-        print("TODO: write csvs")
+        CsvWriter(data, config.csv_output_file_path).write()
 
 
 if __name__ == "__main__":

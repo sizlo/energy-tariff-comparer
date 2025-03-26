@@ -5,7 +5,6 @@ from data import Data
 from hourly_price_calculator import HourlyPriceCalculator
 from exception import MismatchedBucketsException
 from tariff import Tariff
-from util import render_price
 
 
 class Comparer:
@@ -16,7 +15,7 @@ class Comparer:
         self.validate_both_consumptions_have_same_buckets()
         self.increase_total_consumption_when_heat_pump_consumption_is_greater_than_total_consumption()
 
-    def compare(self, output_csvs: bool = False):
+    def compare(self):
         for tariff in self.tariffs:
             HourlyPriceCalculator(self.data, tariff).calculate()
         BucketRollUpper(self.data).roll_up()
@@ -25,7 +24,7 @@ class Comparer:
 
         print("**** Total price for entire period of input data for each tariff ****")
         for total_prices in sorted_total_prices:
-            print(f"{total_prices.tariff.name}: {render_price(total_prices.total)}")
+            print(f"{total_prices.tariff.name}: {self.render_price(total_prices.total)}")
         print()
 
     def validate_both_consumptions_have_same_buckets(self) -> None:
@@ -49,3 +48,8 @@ class Comparer:
             for fixed_hour in fixed_hours:
                 print(f"- {fixed_hour}")
             print()
+
+    @staticmethod
+    def render_price(price_in_pence: float) -> str:
+        price_in_pounds = price_in_pence / 100
+        return f"£{price_in_pounds:.2f}"
