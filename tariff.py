@@ -5,8 +5,18 @@ from typing import Dict
 
 
 class TariffType(Enum):
+    # A basic tariff where all consumption is charged at a flat unit rate.
+    # See file for an example: tests/data/tariffs/standard_valid.json
     STANDARD = "STANDARD"
+
+    # A smart tariff where each hour of the day has a different unit rate which
+    # all consumption is charged at.
+    # See file for an example: tests/data/tariffs/hourly_variable_valid.json
     HOURLY_VARIABLE = "HOURLY_VARIABLE"
+
+    # A smart tariff with one unit rate for heat pump consumption, and another
+    # unit rate for non heat pump consumption.
+    # See file for an example: tests/data/tariffs/flat_heat_pump_rate_valid.json
     FLAT_HEAT_PUMP_RATE = "FLAT_HEAT_PUMP_RATE"
 
 
