@@ -19,6 +19,10 @@ Can be downloaded from your account in the Octopus website. The data is bucketed
 
 Another project written by me which polls the Vaillant API and dumps consumption data to CSV files. [Link to project](https://github.com/sizlo/vaillant-poller).
 
+## Supported tariff types
+
+See the [TariffType enum](tariff.py) for descriptions of the supported tariff types.
+
 ## Running
 
 Install dependencies: `pip install -r requirements.txt`
