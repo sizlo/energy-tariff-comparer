@@ -18,7 +18,7 @@ function render() {
         matchingConsumptionKeys.forEach((key) => consumptionSeries[key] = []);
 
         rows.forEach((row) => {
-            dates.push(row['Start']);
+            dates.push(row["Start"]);
             matchingPriceKeys.forEach((key) => priceSeries[key].push(row[key]));
             matchingConsumptionKeys.forEach((key) => consumptionSeries[key].push(row[key]));
         });
@@ -33,19 +33,6 @@ function render() {
             };
         });
 
-        const priceLayout = {
-            title: {text: `${priceColumn} price (GBP)`},
-            xaxis: {
-                rangeslider: {range: [dates[0], dates[-1]]},
-                type: 'date'
-            },
-            yaxis: {
-                type: 'linear'
-            }
-        };
-
-        Plotly.newPlot('price-graph-container', priceData, priceLayout);
-
         const consumptionData = matchingConsumptionKeys.map((key) => {
             return {
                 type: "scatter",
@@ -53,20 +40,26 @@ function render() {
                 name: key,
                 x: dates,
                 y: consumptionSeries[key],
+                yaxis: "y2",
             };
         });
 
-        const consumptionLayout = {
-            title: {text: "Electricity consumption (kwh)"},
+        const layout = {
+            title: {text: `Top: ${priceColumn} price (GBP) --- Bottom: Electricity consumption (kwh)`},
             xaxis: {
                 rangeslider: {range: [dates[0], dates[-1]]},
-                type: 'date'
+                type: "date",
             },
             yaxis: {
-                type: 'linear'
+                type: "linear",
+                domain: [0.5, 1],
+            },
+            yaxis2: {
+                type: "linear",
+                domain: [0, 0.5],
             }
         };
 
-        Plotly.newPlot('consumption-graph-container', consumptionData, consumptionLayout);
+        Plotly.newPlot("graph-container", priceData.concat(consumptionData), layout);
     });
 }
