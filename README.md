@@ -30,3 +30,11 @@ Install dependencies: `pip install -r requirements.txt`
 Run: `python3 main.py <config_file_path>`
 
 The config file points the script to the consumption and tariff data files. See [here](data/2025-03-23/config.yaml) for an example.
+
+## View graphs
+
+This repo contains an html/js based graph viewer which works with the csv files outputted by the script. It requires running chrome in a mode that allows javascript to load files from the local disk. To run the graph viewer run the following from the repo root:
+
+`./grapher/open.sh`
+
+Then input the csv file path, choose what prices to compare, and hit render.
