@@ -44,9 +44,7 @@ class CsvWriter:
         print(f"Written file {file_path}")
 
     def write_headers(self, writer, is_hourly: bool):
-        tariff_header = ["", "", "", "", "", "", ""]
-
-        column_header = [
+        headers = [
             "Start",
             "End",
             "Heat pump dhw consumption (kwh)",
@@ -57,25 +55,17 @@ class CsvWriter:
         ]
 
         for tariff_name in self.ordered_tariff_names:
-            tariff_header.append(tariff_name)
-            column_header.append("Heat pump dhw price (GBP)")
-            tariff_header.append(tariff_name)
-            column_header.append("Heat pump heating price (GBP)")
-            tariff_header.append(tariff_name)
-            column_header.append("Total heat pump price (GBP)")
-            tariff_header.append(tariff_name)
-            column_header.append("Non heat pump price (GBP)")
+            headers.append(f"{tariff_name} --- Heat pump dhw price (GBP)")
+            headers.append(f"{tariff_name} --- Heat pump heating price (GBP)")
+            headers.append(f"{tariff_name} --- Total heat pump price (GBP)")
+            headers.append(f"{tariff_name} --- Non heat pump price (GBP)")
             if is_hourly:
-                tariff_header.append(tariff_name)
-                column_header.append("Total price ignoring standing charge (GBP)")
+                headers.append(f"{tariff_name} --- Total price ignoring standing charge (GBP)")
             else:
-                tariff_header.append(tariff_name)
-                column_header.append("Standing charge price (GBP)")
-                tariff_header.append(tariff_name)
-                column_header.append("Total price (GBP)")
+                headers.append(f"{tariff_name} --- Standing charge price (GBP)")
+                headers.append(f"{tariff_name} --- Total price (GBP)")
 
-        writer.writerow(tariff_header)
-        writer.writerow(column_header)
+        writer.writerow(headers)
 
     def write_bucket(self, writer, bucket: BucketData, is_hourly: bool):
         row = [
