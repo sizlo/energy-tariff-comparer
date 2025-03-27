@@ -6,19 +6,22 @@
 
 <body>
 	<div id="controls">
-			<label for="file">CSV File</label><input type="text" id="file" style="width: 800px; margin-left: 5px; margin-right: 10px;"/>
+		<label for="file">CSV File</label><input type="text" id="file" style="width: 800px; margin-left: 5px; margin-right: 10px;" />
 
-			<label for="price-column">Price column</label>
-			<select id="price-column" style="margin-right: 10px;">
-				<option value="Total">Total</option>
-				<option value="Heat pump DHW">Heat pump DHW</option>
-				<option value="Heat pump heating">Heat pump heating</option>
-				<option value="Total heat pump">Total heat pump</option>
-				<option value="Non heat pump">Non heat pump</option>
-				<option value="Standing charge">Standing charge (not supported for hourly data)</option>
-			</select>
+		<label for="price-column">Price column</label>
+		<select id="price-column" style="margin-right: 10px;">
+			<option value="Total">Total</option>
+			<option value="Heat pump DHW">Heat pump DHW</option>
+			<option value="Heat pump heating">Heat pump heating</option>
+			<option value="Total heat pump">Total heat pump</option>
+			<option value="Non heat pump">Non heat pump</option>
+			<option value="Standing charge">Standing charge (not supported for hourly data)</option>
+		</select>
 
-			<button type="button" onclick="render()">Render</button>
+		<label for="include-consumption">Include consumption</label>
+		<input type="checkbox" id="include-consumption" style="margin-right: 5px;" />
+
+		<button type="button" onclick="render()">Render</button>
 	</div>
 
 	<div id="graph-container" style="height: 954px; width: 100%;"></div>

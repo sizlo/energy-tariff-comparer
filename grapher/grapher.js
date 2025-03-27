@@ -4,6 +4,8 @@ function render() {
     const priceColumnSelect = document.getElementById("price-column");
     const priceColumn = priceColumnSelect.options[priceColumnSelect.selectedIndex].value;
 
+    const includeConsumption = document.getElementById("include-consumption").checked;
+
     const dates = [];
     const priceSeries = {};
     const consumptionSeries = {}
@@ -45,21 +47,26 @@ function render() {
         });
 
         const layout = {
-            title: {text: `Top: ${priceColumn} price (GBP) --- Bottom: Electricity consumption (kwh)`},
+            title: {text: `${priceColumn} price (GBP)`},
             xaxis: {
                 rangeslider: {range: [dates[0], dates[-1]]},
                 type: "date",
             },
             yaxis: {
                 type: "linear",
-                domain: [0.5, 1],
-            },
-            yaxis2: {
-                type: "linear",
-                domain: [0, 0.5],
             }
         };
 
-        Plotly.newPlot("graph-container", priceData.concat(consumptionData), layout);
+        if (includeConsumption) {
+            layout["title"]["text"] = `Top: ${priceColumn} price (GBP) --- Bottom: Electricity consumption (kwh)`
+            layout["yaxis"]["domain"] = [0.5, 1];
+            layout["yaxis2"] = {
+                type: "linear",
+                domain: [0, 0.5]
+            };
+            Plotly.newPlot("graph-container", priceData.concat(consumptionData), layout);
+        } else {
+            Plotly.newPlot("graph-container", priceData, layout);
+        }
     });
 }
